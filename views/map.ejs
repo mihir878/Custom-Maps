@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    <title>Customized Maps</title>
+    <%- include ("./files") %>
+    <link rel="stylesheet" href="/css/map.css">
+
+    <script>
+        function loadMap(){
+            const allahabad = {lat : 25.4920,lng : 81.8639};
+            const source = "<%= src %>";
+            const destination = "<%= dest %>";
+             
+            if(source == "null" || destination == "null"){
+            //Initializing map
+            const map = new google.maps.Map(document.getElementById('map'),{
+                zoom : 17,
+                center : allahabad,
+            });
+
+            //Iniializing Marker
+            const marker = new google.maps.Marker({
+                position : allahabad,
+                map : map,
+            });
+          }else{
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+
+            const map = new google.maps.Map(document.getElementById("map"));
+            directionsRenderer.setMap(map);
+
+            directionsService.route(
+              {
+                origin: source,
+                destination: destination,
+                travelMode: "DRIVING"
+              },
+              (response,status)=>{
+                if(status === "OK"){
+                directionsRenderer.setDirections(response);
+                }else{
+                window.alert(status);
+                }
+              }
+            )
+
+          }
+        }
+    </script>
+
+  </head>
+
+
+  <body>
+    <!-- Including navigation bar -->
+    <div id="nav-bar">
+    <%- include ("./navbar") %>
+    </div>
+
+    <!-- The div element for the map -->
+    <div id="below-nav">
+    <%- include("./sidebarmap") %>
+    <div id="map"></div>
+    </div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWnZu9NiWjMKVQSCWivtHl3O1pp9Bj4t0&callback=initMap&libraries=places&v=weekly" type="text/javascript"
+      async defer
+    ></script>
+
+    <script>
+      function AutoComplete(){
+        console.log("You are here");
+
+        let fromSearchBar = document.getElementById('fromSearchBar');
+        let toSearchBar = document.getElementById('toSearchBar');
+
+        let autocomplete1 = new google.maps.places.Autocomplete(fromSearchBar);
+        let autocomplete2 = new google.maps.places.Autocomplete(toSearchBar);
+      }
+    </script>
+
+    <script>
+      function initMap(){
+        loadMap();
+        AutoComplete();
+      }
+    </script>
+
+    <script>
+      function searchRoute(){
+        let source = document.getElementById('fromSearchBar').value;
+        let destination = document.getElementById('toSearchBar').value;
+        console.log(source);
+        console.log(destination);
+        //for redirecting to url
+        window.location.replace("http://localhost:5000/search_route/?src="+source+"&dest="+destination); 
+      }
+    </script>
+
+  </body>
+</html>
