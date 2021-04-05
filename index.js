@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = process.env.port||5000;
 const router = require('./router/index');
+require('dotenv').config();
 
 //EJS
 app.set('view engine','ejs');
@@ -13,7 +14,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({extended:false}));
 
 app.get('/',(req,res)=>{
-    res.render('map',{src: "null",dest: "null"});
+    res.render('map',{src: "",dest: "",safety: false,entertainment: false,index: 0,API_KEY: process.env.API_KEY});
 });
 
 app.use('/',router);
